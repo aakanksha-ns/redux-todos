@@ -5,9 +5,6 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { createStore } from "redux";
 import { combineReducers } from "redux";
-
-ReactDOM.render(<App />, document.getElementById("root"));
-
 //----------------------------------------------------Reducers----------------------------------------------------------------
 const todo = (state, action) => {
   switch (action.type) {
@@ -80,7 +77,7 @@ const TodoList = ({ todos, onTodoClick }) => (
   </ul>
 );
 
-const AddTodo = ({ onAddClick }) => {
+const AddTodo = () => {
   let input;
   return (
     <div>
@@ -91,7 +88,11 @@ const AddTodo = ({ onAddClick }) => {
       />
       <button
         onClick={() => {
-          onAddClick(input.value);
+          store.dispatch({
+            type: "ADD_TODO",
+            id: nextTodoId++,
+            text: input.value
+          });
           input.value = "";
         }}
       >
@@ -193,31 +194,18 @@ const getVisibleTodos = (todos, filter) => {
 
 //--------------------------------------------------------Parent component and render---------------------------------------------------
 let nextTodoId = 0;
-const TodoApp = ({ todos, visibilityFilter }) => (
+const TodoApp = () => (
   <div>
-    <AddTodo
-      onAddClick={text => {
-        store.dispatch({
-          type: "ADD_TODO",
-          id: nextTodoId++,
-          text
-        });
-      }}
-    />
+    <AddTodo />
     <VisibleTodoList />
     <Footer />
   </div>
 );
 
-const render = () => {
-  ReactDOM.render(
-    <TodoApp {...store.getState()} />,
-    document.getElementById("root")
-  );
-};
-
-store.subscribe(render);
-render();
+ReactDOM.render(
+  <TodoApp {...store.getState()} />,
+  document.getElementById("root")
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
