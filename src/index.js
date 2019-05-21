@@ -54,18 +54,6 @@ const todoApp = combineReducers({
   visibilityFilter
 });
 
-// const todoApp = (state= {}, action) => {
-//   return {
-//     todos: todos(
-//       state.todos,
-//       action
-//     ),
-//     visibilityFilter : visibilityFilter(
-//       state.visibilityFilter,
-//       action
-//     )
-//   }
-// };
 const store = createStore(todoApp);
 
 const { Component } = React;
@@ -88,6 +76,27 @@ const TodoList = ({ todos, onTodoClick }) => (
     ))}
   </ul>
 );
+
+const AddTodo = ({ onAddClick }) => {
+  let input;
+  return (
+    <div>
+      <input
+        ref={node => {
+          input = node;
+        }}
+      />
+      <button
+        onClick={() => {
+          onAddClick(input.value);
+          input.value = "";
+        }}
+      >
+        Add Todo
+      </button>
+    </div>
+  );
+};
 
 const FilterLink = ({ filter, currentFilter, children }) => {
   if (filter === currentFilter) {
@@ -129,23 +138,15 @@ class TodoApp extends Component {
     const visibleTodos = getVisibleTodos(todos, visibilityFilter);
     return (
       <div>
-        <input
-          ref={node => {
-            this.input = node;
-          }}
-        />
-        <button
-          onClick={() => {
+        <AddTodo
+          onAddClick={text => {
             store.dispatch({
               type: "ADD_TODO",
-              text: this.input.value,
-              id: nextTodoId++
+              id: nextTodoId++,
+              text
             });
-            this.input.value = "";
           }}
-        >
-          Add Todo
-        </button>
+        />
         <TodoList
           todos={visibleTodos}
           onTodoClick={id => {
@@ -181,30 +182,6 @@ const render = () => {
 
 store.subscribe(render);
 render();
-
-// console.log('Initial state:');
-// console.log(store.getState());
-// console.log('------------');
-
-// console.log('Dispatching ADD_TODO');
-// store.dispatch({
-//   type: 'ADD_TODO',
-//   id: 0,
-//   text: 'Learn Redux'
-// });
-// console.log('Current state:');
-// console.log(store.getState());
-// console.log('------------');
-
-// console.log('Dispatching ADD_TODO');
-// store.dispatch({
-//   type: 'ADD_TODO',
-//   id: 0,
-//   text: 'Learn guitar'
-// });
-// console.log('Current state:');
-// console.log(store.getState());
-// console.log('------------');
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
