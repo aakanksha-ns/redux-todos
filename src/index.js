@@ -5,7 +5,7 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import { createStore } from "redux";
 import { combineReducers } from "redux";
-import { Provider, ReactReduxContext } from "react-redux";
+import { Provider, ReactReduxContext, connect } from "react-redux";
 //----------------------------------------------------Reducers----------------------------------------------------------------
 const todo = (state, action) => {
   switch (action.type) {
@@ -76,37 +76,31 @@ const TodoList = ({ todos, onTodoClick }) => (
   </ul>
 );
 
-const AddTodo = (props, { store }) => {
+let AddTodo = ({ dispatch }) => {
   let input;
   return (
-    <ReactReduxContext.Consumer>
-      {({ store }) => (
-        <div>
-          <input
-            ref={node => {
-              input = node;
-            }}
-          />
-          <button
-            onClick={() => {
-              store.dispatch({
-                type: "ADD_TODO",
-                id: nextTodoId++,
-                text: input.value
-              });
-              input.value = "";
-            }}
-          >
-            Add Todo
-          </button>
-        </div>
-      )}
-    </ReactReduxContext.Consumer>
+    <div>
+      <input
+        ref={node => {
+          input = node;
+        }}
+      />
+      <button
+        onClick={() => {
+          dispatch({
+            type: "ADD_TODO",
+            id: nextTodoId++,
+            text: input.value
+          });
+          input.value = "";
+        }}
+      >
+        Add Todo
+      </button>
+    </div>
   );
 };
-AddTodo.contextTypes = {
-  store: PropTypes.object
-};
+AddTodo = connect()(AddTodo);
 
 const Link = ({ active, children, onClick }) => {
   if (active) {
@@ -182,53 +176,22 @@ class FilterLinkContainer extends Component {
   }
 }
 
-class VisibleTodoList extends Component {
-  componentDidMount() {
-    const { store } = this.props;
-    this.unsubscribe = store.subscribe(() => this.forceUpdate());
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-
-  render() {
-    //const { store } = this.context;
-    //console.log("inside component:", this.context);
-    //const state = store.getState();
-
-    return (
-      // <TodoList
-      //   todos={getVisibleTodos(state.todos, state.visibilityFilter)}
-      //   onTodoClick={id => store.dispatch({ type: "TOGGLE_TODO", id })}
-      // />
-      <ReactReduxContext.Consumer>
-        {({ store }) => (
-          <TodoList
-            todos={getVisibleTodos(
-              store.getState().todos,
-              store.getState().visibilityFilter
-            )}
-            onTodoClick={id => store.dispatch({ type: "TOGGLE_TODO", id })}
-          />
-        )}
-      </ReactReduxContext.Consumer>
-    );
-  }
-}
-VisibleTodoList.contextTypes = {
-  store: PropTypes.object
+const mapStateTodoListProps = state => {
+  return {
+    todos: getVisibleTodos(state.todos, state.visibilityFilter)
+  };
 };
-
-class VisibleTodoListContainer extends Component {
-  render() {
-    return (
-      <ReactReduxContext.Consumer>
-        {({ store }) => <VisibleTodoList store={store} />}
-      </ReactReduxContext.Consumer>
-    );
-  }
-}
+const mapDispatchTodoListProps = dispatch => {
+  return {
+    onTodoClick: id => {
+      dispatch({ type: "TOGGLE_TODO", id });
+    }
+  };
+};
+const VisibleTodoList = connect(
+  mapStateTodoListProps,
+  mapDispatchTodoListProps
+)(TodoList);
 
 //---------------------------------------------------------Helper functions----------------------------------------------------------
 const getVisibleTodos = (todos, filter) => {
@@ -249,7 +212,7 @@ let nextTodoId = 0;
 const TodoApp = () => (
   <div>
     <AddTodo />
-    <VisibleTodoListContainer />
+    <VisibleTodoList />
     <Footer />
   </div>
 );
