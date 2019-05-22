@@ -121,60 +121,32 @@ const Link = ({ active, children, onClick }) => {
 
 const Footer = () => (
   <p>
-    Show: <FilterLinkContainer filter="SHOW_ALL">All</FilterLinkContainer>{" "}
-    <FilterLinkContainer filter="SHOW_ACTIVE">Active</FilterLinkContainer>{" "}
-    <FilterLinkContainer filter="SHOW_COMPLETED">Completed</FilterLinkContainer>
+    Show: <FilterLink filter="SHOW_ALL">All</FilterLink>{" "}
+    <FilterLink filter="SHOW_ACTIVE">Active</FilterLink>{" "}
+    <FilterLink filter="SHOW_COMPLETED">Completed</FilterLink>
   </p>
 );
 
 //------------------------------------------------------Container components-----------------------------------------------------------
-class FilterLink extends Component {
-  componentDidMount() {
-    const { store } = this.props;
-    this.unsubscribe = store.subscribe(() => this.forceUpdate());
-  }
 
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-
-  render() {
-    const props = this.props;
-    //const { store } = this.context;
-    //const state = store.getState();
-
-    return (
-      <ReactReduxContext.Consumer>
-        {({ store }) => (
-          <Link
-            active={props.filter === store.getState().visibilityFilter}
-            onClick={() =>
-              store.dispatch({
-                type: "SET_VISIBILITY_FILTER",
-                filter: props.filter
-              })
-            }
-          >
-            {props.children}
-          </Link>
-        )}
-      </ReactReduxContext.Consumer>
-    );
-  }
-}
-FilterLink.contextTypes = {
-  store: PropTypes.object
+const mapStateToLinkProps = (state, ownProps) => {
+  return {
+    active: ownProps.filter === state.visibilityFilter
+  };
 };
-
-class FilterLinkContainer extends Component {
-  render() {
-    return (
-      <ReactReduxContext.Consumer>
-        {({ store }) => <FilterLink store={store} {...this.props} />}
-      </ReactReduxContext.Consumer>
-    );
-  }
-}
+const mapDispatchToLinkProps = (dispatch, ownProps) => {
+  return {
+    onClick: () =>
+      dispatch({
+        type: "SET_VISIBILITY_FILTER",
+        filter: ownProps.filter
+      })
+  };
+};
+const FilterLink = connect(
+  mapStateToLinkProps,
+  mapDispatchToLinkProps
+)(Link);
 
 const mapStateTodoListProps = state => {
   return {
