@@ -20,6 +20,12 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -34,5 +40,25 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyCEas2ZrkfzYEEltikJVu08Tw-3bRh0VDA",
+        authDomain: "todos-redux-63a14.firebaseapp.com",
+        databaseURL: "https://todos-redux-63a14.firebaseio.com",
+        projectId: "todos-redux-63a14",
+        storageBucket: "todos-redux-63a14.appspot.com",
+        messagingSenderId: "624002253194",
+        appId: "1:624002253194:web:c184944dc72c20ec"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    </script>
   </body>
 </html>

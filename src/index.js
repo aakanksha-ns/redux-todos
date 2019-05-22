@@ -4,6 +4,12 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import { createStore, combineReducers } from "redux";
 import { Provider, connect } from "react-redux";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+
 //----------------------------------------------------Reducers----------------------------------------------------------------
 const todo = (state, action) => {
   switch (action.type) {
@@ -95,21 +101,29 @@ const TodoList = ({ todos, onTodoClick }) => (
 let AddTodo = ({ dispatch }) => {
   let input;
   return (
-    <div>
-      <input
-        ref={node => {
-          input = node;
-        }}
-      />
-      <button
+    <Form>
+      <Form.Row>
+        <Form.Group as={Col} md="4" id="formGridCheckbox">
+          <Form.Control
+            size="lg"
+            type="text"
+            placeholder="Enter todo"
+            ref={node => {
+              input = node;
+            }}
+          />
+        </Form.Group>
+      </Form.Row>
+      <Button
+        variant="primary"
         onClick={() => {
           dispatch(addTodo(input.value));
           input.value = "";
         }}
       >
         Add Todo
-      </button>
-    </div>
+      </Button>
+    </Form>
   );
 };
 AddTodo = connect()(AddTodo);
@@ -190,11 +204,23 @@ const getVisibleTodos = (todos, filter) => {
 //--------------------------------------------------------Parent component and render---------------------------------------------------
 let nextTodoId = 0;
 const TodoApp = () => (
-  <div>
-    <AddTodo />
-    <VisibleTodoList />
-    <Footer />
-  </div>
+  <Container>
+    <Row>
+      <Col md={{ offset: 4 }}>
+        <AddTodo />
+      </Col>
+    </Row>
+    <Row>
+      <Col md={{ offset: 4 }}>
+        <VisibleTodoList />
+      </Col>
+    </Row>
+    <Row>
+      <Col md={{ offset: 4 }}>
+        <Footer />
+      </Col>
+    </Row>
+  </Container>
 );
 const store = createStore(todoApp);
 console.log(store);
